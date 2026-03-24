@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pragita Prabawa Pustaka - Sixthgrade</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:"Outfit",sans-serif;
+}
+
+/* BODY */
+html, body{
+  min-height:100vh;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  color:#111;
+  background:#f5f7fb;
+  overflow-x:hidden;
+  padding-top:70px;
+}
+
+/* ANIMATION */
+@keyframes fadeSlideUp{
+  0%{opacity:0; transform:translateY(30px);}
+  100%{opacity:1; transform:translateY(0);}
+}
+
+/* HEADER */
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  background:#fff;
+  border-bottom:1px solid #e5e7eb;
+  padding:12px 5%;
+  z-index:100;
+  display:flex;
+  justify-content:center;
+  font-size:clamp(1.8rem,4vw,2.5rem);
+  font-weight:700;
+  backdrop-filter:blur(10px);
+  opacity:0;
+}
+
+/* SEARCH */
+.filter-wrapper{
+  width:95%;
+  max-width:1200px;
+  margin:10px auto;
+  opacity:0;
+}
+
+.filter-box input{
+  width:100%;
+  padding:12px 14px;
+  border-radius:12px;
+  border:1px solid #ddd;
+  background:#fff;
+  color:#111;
+  font-size:1rem;
+  outline:none;
+}
+
+.filter-box input:focus{
+  border-color:#111;
+  box-shadow:0 0 0 3px rgba(0,0,0,0.05);
+}
+
+/* TABLE CARD */
+.table-wrapper{
+  width:95%;
+  max-width:1200px;
+  margin-top:15px;
+  display:flex;
+  flex-direction:column;
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.06);
+  padding:10px;
+  opacity:0;
+}
+
+.table-scroll{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:600px;
+}
+
+th, td{
+  padding:14px 10px;
+  border:1px solid #e5e7eb;
+  text-align:center;
+}
+
+th{
+  background:#f9fafb;
+  font-weight:700;
+}
+
+tr:hover td{
+  background:#f3f4f6;
+}
+
+/* NO RESULT */
+.no-result{
+  text-align:center;
+  margin:15px;
+  color:#e11d48;
+  display:none;
+}
+
+/* PAGINATION */
+.pagination{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin:10px 0;
+  flex-wrap:wrap;
+  opacity:0;
+}
+
+.pagination button{
+  cursor:pointer;
+  padding:8px 18px;
+  border-radius:12px;
+  background:#fff;
+  color:#111;
+  font-weight:600;
+  border:1px solid #ddd;
+  transition:0.25s;
+}
+
+.pagination button:hover{
+  background:#111;
+  color:#fff;
+  transform:scale(1.05);
+}
+
+.pagination button:disabled{
+  opacity:0.4;
+  cursor:not-allowed;
+  background:#f3f4f6;
+}
+
+/* MOBILE */
+@media (max-width:992px){
+  th,td{font-size:0.9rem; padding:10px 6px;}
+}
+
+@media (max-width:576px){
+  th,td{font-size:0.8rem; padding:8px 4px;}
+}
+</style>
+</head>
+
+<body>
+
+<header id="header">Pragita Prabawa Pustaka</header>
+
+<div class="filter-wrapper" id="filterWrapper">
+  <div class="filter-box">
+    <input type="text" id="searchInput" placeholder="Cari Title, Singer, Composer...">
+  </div>
+</div>
+
+<div class="table-wrapper" id="tableWrapper">
+
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr>
+          <th>SONG ID</th>
+          <th>TITLE</th>
+          <th>SINGER</th>
+          <th>COMPOSER</th>
+          <th>YOUTUBE</th>
+        </tr>
+      </thead>
+      <tbody id="transactionList"></tbody>
+    </table>
+  </div>
+
+  <p class="no-result" id="noResult">Data tidak ditemukan.</p>
+
+  <div class="pagination" id="pagination">
+    <button id="prevBtn">Previous</button>
+    <button id="nextBtn">Next</button>
+  </div>
+
+</div>
+
+<script>
+const itemsPerPage = 50;
+let currentPage = 1;
+let transactions = [];
+let filteredTransactions = [];
+
+const transactionList = document.getElementById('transactionList');
+const searchInput = document.getElementById('searchInput');
+const noResult = document.getElementById('noResult');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const header = document.getElementById('header');
+const filterWrapper = document.getElementById('filterWrapper');
+const tableWrapper = document.getElementById('tableWrapper');
+const pagination = document.getElementById('pagination');
+
+/* LOAD DATA */
+async function loadData(){
+  try{
+    const response = await fetch('pragita-prabawa-pustaka.json');
+    const rawData = await response.json();
+
+    transactions = rawData.map(item => ({
+      no: item["SONG ID"] || "-",
+      title: item["JUDUL LAGU"] || "-",
+      singer: item["SINGER"] || "-",
+      composer: item["COMPOSER"] || "-",
+      youtube: item["YOUTUBE"] || "-"
+    }));
+
+    filteredTransactions = [...transactions];
+    renderTransactions();
+  }catch(err){
+    console.error("Gagal load JSON:", err);
+  }
+}
+
+/* RENDER */
+function renderTransactions(){
+  transactionList.innerHTML = '';
+
+  const start = (currentPage-1)*itemsPerPage;
+  const end = start + itemsPerPage;
+  const pageItems = filteredTransactions.slice(start,end);
+
+  noResult.style.display = pageItems.length===0 ? 'block' : 'none';
+
+  pageItems.forEach((t,i)=>{
+    const tr = document.createElement('tr');
+
+    const yt = t.youtube === "-" 
+      ? "-" 
+      : `<a href="${t.youtube}" target="_blank" style="color:#2563eb;">Link</a>`;
+
+    tr.innerHTML = `
+      <td>${t.no}</td>
+      <td>${t.title}</td>
+      <td>${t.singer}</td>
+      <td>${t.composer}</td>
+      <td>${yt}</td>
+    `;
+
+    tr.style.opacity = '0';
+    tr.style.transform = 'translateY(20px)';
+    tr.style.animation = `fadeSlideUp 0.5s ease ${(i*0.03)}s forwards`;
+
+    transactionList.appendChild(tr);
+  });
+
+  prevBtn.disabled = currentPage===1;
+  nextBtn.disabled = currentPage>=Math.ceil(filteredTransactions.length/itemsPerPage);
+}
+
+/* SEARCH */
+searchInput.addEventListener('input',()=>{
+  const q = searchInput.value.toLowerCase();
+
+  filteredTransactions = transactions.filter(t =>
+    t.title.toLowerCase().includes(q) ||
+    t.singer.toLowerCase().includes(q) ||
+    t.composer.toLowerCase().includes(q)
+  );
+
+  currentPage = 1;
+  renderTransactions();
+});
+
+/* PAGINATION */
+prevBtn.onclick = ()=>{
+  if(currentPage>1){
+    currentPage--;
+    renderTransactions();
+  }
+};
+
+nextBtn.onclick = ()=>{
+  if(currentPage < Math.ceil(filteredTransactions.length/itemsPerPage)){
+    currentPage++;
+    renderTransactions();
+  }
+};
+
+/* PAGE ANIMATION */
+function triggerPageAnimation(){
+  [header, filterWrapper, tableWrapper, pagination].forEach((el,i)=>{
+    el.style.animation = 'none';
+    void el.offsetHeight;
+    el.style.animation = `fadeSlideUp 0.8s ease ${i*0.2}s forwards`;
+  });
+}
+
+window.addEventListener('pageshow', triggerPageAnimation);
+
+/* INIT */
+loadData();
+</script>
+
+</body>
+</html>
