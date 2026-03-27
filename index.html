@@ -1,118 +1,262 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sixthgrade Labs</title>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-  * {margin:0; padding:0; box-sizing:border-box; font-family:'Outfit',sans-serif;}
-  html, body {height:100%; scroll-behavior:smooth; background:#0b0b0f; color:#fff;}
-  body {overflow-x:hidden;}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sixthgrade Labs | The Artist First Distribution</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;500;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        :root {
+            --accent: #a855f7;
+            --accent-glow: rgba(168, 85, 247, 0.4);
+            --bg: #000000;
+            --surface: #0a0a0a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --text-main: #ffffff;
+            --text-muted: #71717a;
+        }
 
-  section {
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:60px 20px;
-    background: linear-gradient(135deg, rgba(20,20,30,0.85), rgba(0,0,0,0.85)), 
-                url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-    backdrop-filter:blur(2px);
-    flex-direction:column;
-    text-align:center;
-    opacity:0;
-    animation: fadeIn 1.5s ease forwards;
-  }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-font-smoothing: antialiased;
+        }
 
-  @keyframes fadeIn { to {opacity:1;} }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
 
-  h1 {font-size:4rem; font-weight:700; margin-bottom:20px; text-shadow:0 0 30px rgba(255,255,255,0.2);}
-  p {font-size:1.3rem; line-height:1.6; color:#ddd; margin-bottom:20px;}
-  .sub-text {font-size:1rem; color:#aaa; margin-bottom:40px; line-height:1.5;}
+        /* --- Global Elements --- */
+        .btn {
+            padding: 16px 32px;
+            border-radius: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            border: none;
+        }
 
-  .btn {
-    padding:16px 36px;
-    font-size:1.1rem;
-    font-weight:600;
-    color:#fff;
-    border:2px solid #667eea;
-    border-radius:14px;
-    background:transparent;
-    transition:0.3s;
-    cursor:pointer;
-    backdrop-filter: blur(5px);
-  }
-  .btn:hover { background:#667eea; color:#0b0b0f; box-shadow:0 0 25px #667eea; }
+        .btn-primary {
+            background: #fff;
+            color: #000;
+        }
 
-  .features { display:grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap:20px; width:100%; max-width:1000px; }
-  .feature-box { background: rgba(255,255,255,0.05); border-radius:18px; padding:20px; border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); transition:0.3s; }
-  .feature-box:hover { transform: translateY(-5px); box-shadow:0 0 20px rgba(102,126,234,0.4); }
-  .feature-box h3 { font-size:1.3rem; margin-bottom:10px; color:#667eea; }
-  .feature-box p { font-size:0.95rem; color:#ccc; }
+        .btn-primary:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 30px rgba(255,255,255,0.2);
+        }
 
-  footer { padding:40px 20px; font-size:0.95rem; color:#777; text-align:center; background:#0a0a0d; }
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 25px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass);
+        }
 
-  /* Responsive */
-  @media(max-width:1000px){
-    h1{font-size:3rem;}
-    p{font-size:1.2rem;}
-    .sub-text{font-size:0.95rem;}
-  }
-  @media(max-width:600px){
-    h1{font-size:2.2rem;}
-    p{font-size:1rem;}
-    .sub-text{font-size:0.85rem;}
-    .features{grid-template-columns:1fr;}
-  }
-</style>
+        .logo {
+            font-weight: 800;
+            font-size: 1.3rem;
+            letter-spacing: -1px;
+            color: #fff;
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 24px;
+            background: 
+                radial-gradient(circle at 50% 40%, var(--accent-glow), transparent 50%);
+        }
+
+        .tag {
+            background: var(--glass);
+            padding: 8px 20px;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 30px;
+            color: var(--accent);
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 800;
+            letter-spacing: -4px;
+            line-height: 0.9;
+            margin-bottom: 25px;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            max-width: 550px;
+            margin-bottom: 40px;
+        }
+
+        /* --- Pricing/Membership Card --- */
+        .pricing-section {
+            padding: 100px 5%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .premium-card {
+            background: var(--surface);
+            width: 100%;
+            max-width: 550px;
+            border-radius: 40px;
+            padding: 60px 40px;
+            border: 1px solid var(--glass);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+        }
+
+        .premium-card::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        .price-title {
+            font-size: 1rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .price-value {
+            font-size: 5rem;
+            font-weight: 800;
+            margin: 10px 0;
+            letter-spacing: -3px;
+        }
+
+        .feature-grid {
+            margin: 40px 0;
+            text-align: left;
+            display: grid;
+            gap: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+
+        .feature-item i {
+            color: var(--accent);
+        }
+
+        /* --- Footer --- */
+        footer {
+            padding: 80px 5%;
+            text-align: center;
+            border-top: 1px solid var(--glass);
+        }
+
+        /* --- Mobile Responsiveness --- */
+        @media (max-width: 768px) {
+            .hero h1 { letter-spacing: -2px; }
+            .premium-card { padding: 40px 24px; border-radius: 30px; }
+            .price-value { font-size: 4rem; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- PAGE 1: HOME -->
-<section id="home">
-  <h1>Sixthgrade Labs</h1>
-  <p>We connect creators and artists in a world of sound, crafting networks and experiences beyond the ordinary.</p>
-  <div class="sub-text">
-    Explore collaborations, discover new talent, and join a music network designed for creators by creators.
-  </div>
-  <a href="mailto:admin@sixthgradelabs.web.id" class="btn">Contact Us</a>
-</section>
+    <nav>
+        <div class="logo">Sixthgrade Labs</div>
+        <a href="../register" class="btn btn-primary" style="padding: 10px 24px; border-radius: 10px; font-size: 0.8rem;">JOIN NOW</a>
+    </nav>
 
-<!-- PAGE 2: FEATURES -->
-<section id="features">
-  <h1>Our Services</h1>
-  <p>Discover what Sixthgrade Labs offers to enhance your creative journey.</p>
-  <div class="features">
-    <div class="feature-box">
-      <h3>Network</h3>
-      <p>Connect with fellow artists and creators globally. Build a collaborative environment for music projects.</p>
-    </div>
-    <div class="feature-box">
-      <h3>Collaboration</h3>
-      <p>Find talented musicians, producers, and vocalists to work together on your music creations.</p>
-    </div>
-    <div class="feature-box">
-      <h3>Support</h3>
-      <p>Get guidance and assistance from a community focused on growth, feedback, and creative support.</p>
-    </div>
-    <div class="feature-box">
-      <h3>Opportunities</h3>
-      <p>Access showcases, online events, and features to promote your music to wider audiences.</p>
-    </div>
-  </div>
-</section>
+    <section class="hero">
+        <span class="tag">Zero Upfront Cost</span>
+        <h1>Your music. <br>Worldwide.</h1>
+        <p>No subscriptions. No hidden fees. Start your career with the industry's most flexible distribution partner.</p>
+        <a href="mailto:admin@sixthgradelabs.web.id" class="btn btn-primary">Contact</a>
+    </section>
 
-<!-- PAGE 3: CONTACT -->
-<section id="contact">
-  <h1>Get in Touch</h1>
-  <p>Have questions, suggestions, or want to collaborate? Reach out directly via email.</p>
-  <a href="mailto:admin@sixthgradelabs.web.id" class="btn">Contact Us</a>
-</section>
+    <section class="pricing-section" id="join">
+        <div class="premium-card">
+            <p class="price-title">The Community Plan</p>
+            <div class="price-value">$0<span style="font-size: 1.5rem; color: var(--text-muted); letter-spacing: 0;">/year</span></div>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">Professional distribution, accessible for everyone.</p>
+            
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <i data-lucide="users" size="24"></i>
+                    <span><strong>Unlimited</strong> Artist Profiles</span>
+                </div>
+                <div class="feature-item">
+                    <i data-lucide="upload-cloud" size="24"></i>
+                    <span><strong>Unlimited</strong> Music Releases</span>
+                </div>
+                <div class="feature-item">
+                    <i data-lucide="zap" size="24"></i>
+                    <span><strong>Fast Response</strong> Support</span>
+                </div>
+                <div class="feature-item">
+                    <i data-lucide="pie-chart" size="24"></i>
+                    <span><strong>Keep 85%</strong> of Your Royalties</span>
+                </div>
+                <div class="feature-item">
+                    <i data-lucide="globe-2" size="24"></i>
+                    <span>150+ Digital Stores (Spotify, Apple, etc.)</span>
+                </div>
+            </div>
 
-<footer>
-  admin@sixthgradelabs.web.id
-</footer>
+            <a href="../register" class="btn btn-primary" style="width: 100%; background: var(--accent); color: white;">Get Started</a>
+            <p style="margin-top: 25px; font-size: 0.8rem; color: var(--text-muted);">Joining is subject to track review and quality control.</p>
+        </div>
+    </section>
 
+    <footer>
+        <div class="logo" style="margin-bottom: 20px;">Sixthgrade Labs</div>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">Distribution, Marketing, and Artist Growth.</p>
+        <div style="display: flex; justify-content: center; gap: 30px; margin-top: 40px; color: var(--text-muted);">
+            <i data-lucide="instagram" size="20"></i>
+            <i data-lucide="twitter" size="20"></i>
+            <i data-lucide="youtube" size="20"></i>
+        </div>
+        <p style="margin-top: 40px; font-size: 0.7rem; color: #333;">© 2026 Sixthgrade Labs. We grow when you grow.</p>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
